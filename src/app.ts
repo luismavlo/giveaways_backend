@@ -4,6 +4,7 @@ import { limitRequest } from "./config/plugins/rate-limit.plugin";
 import { enableCors } from "./config/plugins/cors.plugin";
 import hpp from 'hpp'
 import helmet from "helmet";
+import {router} from "./routes";
 
 
 const app = express();
@@ -18,6 +19,8 @@ app.use( helmet() );
 app.use( hpp() );
 
 enableCors( app, ACCEPTED_ORIGINS )
+
+app.use('/api/v1', router)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
