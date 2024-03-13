@@ -19,6 +19,12 @@ const handleJWTExpiredError = () =>
 
 const handleJWTError = () =>
   new AppError('Invalid token. Please login again', 401)
+
+const handleInvalidDiscordCode = () => 
+  new AppError("Invalid Discord Code", 401);
+
+const handleIsntInServer = () => 
+  new AppError("User isn't in DevTalles", 401)
  
 const sendErrorDev = (err: any, res: Response) => {
   res.status(err.statusCode).json({
@@ -63,6 +69,9 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     if (err.parent?.code === '22P02') error = handleCastError22P02();
     if(err.name === 'TokenExpiredError') error = handleJWTExpiredError();
     if(err.name === 'JsonWebTokenError') error = handleJWTError();
+    if (err.response?.data?.error_description == 'Invalid "code" in request.')
+      error = handleInvalidDiscordCode();
+    if (error.response?.data.code === 10004) error = handleIsntInServer();
 
     sendErrorProd(error, res)
   }

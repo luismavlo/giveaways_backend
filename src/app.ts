@@ -22,6 +22,10 @@ enableCors( app, ACCEPTED_ORIGINS )
 
 app.use('/api/v1', router)
 
+app.use('/api/v1/discord', (req, res) => {
+  const token = req.body
+});
+
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
 })
