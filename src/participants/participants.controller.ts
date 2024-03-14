@@ -1,58 +1,25 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError, catchAsync } from "../errors";
-import { prisma } from "../config/database/postgres";
-import axios, { AxiosError } from 'axios';
-import qs from 'querystring';
-import { DiscordUserRes, TokenRes } from "./responses";
-import { envs } from "../config/enviroments/enviroment";
+import { catchAsync } from "../errors";
+import { validateParticipant } from "./participants.schema";
+import { ParticipantService } from "./participants.service";
 
 export const getAllParticipants = catchAsync(async (req: Request, res: Response) => {
-    const participants = await prisma.participant.findMany();
+    const participants = ParticipantService.getAllParticipants(req.query);
     return res.json(participants);
 })
 
 export const createParticipant = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const { code, fullname, giveawayId } = req.body;
-        const url = 'https://discord.com/api/v10';
-    
-        const data = {
-            grant_type: 'authorization_code',
-            client_id: envs.DISCORD_CLIENT_ID,
-            client_secret: envs.DISCORD_CLIENT_SECRET,
-            redirect_uri: envs.DISCORD_REDIRECT_URI,
-            code
-        }
-    
-        // obtener token de usuario
-        const { data: { access_token } } = await axios.post<TokenRes>(
-            url + '/oauth2/token', 
-            qs.stringify(data), {
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        });
+    const { hasError, errorMessages, participantData } = validateParticipant(req.body);
 
-        const bearerHeader = {
-            headers: { 'Authorization': `Bearer ${access_token}` }
-        }
+    if (hasError) {
+        return res.status(422).json({
+            status: 'error',
+            message: errorMessages
+        })
+    }
 
-        // verificar que el usuario esté en devtalles
-        await axios.get(`${url}/users/@me/guilds/1130900724499365958/member`, bearerHeader);
+    const user = await ParticipantService.createParticipant(participantData);
 
-        const { data: discordUser } = await axios.get<DiscordUserRes>(`${url}/users/@me`, bearerHeader);
+    return res.status(201).json(user);
 
-        const user = {
-            fullname, 
-            giveawayId,
-            discordId: discordUser.id,
-            email: discordUser.email,
-        }
-
-        // prisma.participant.create({data: {
-        //     fullname, 
-        //     discordId: discordUser.id,
-        //     email: discordUser.email,
-        //     giveawayId
-        // }});
-    
-        return res.status(201).json(user);
-      
 });
