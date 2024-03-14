@@ -7,3 +7,9 @@ export interface IUser {
   password: string,
   avatar: string,
 }
+
+
+export interface ILoginUser {
+  email: string,
+  password: string,
+}
