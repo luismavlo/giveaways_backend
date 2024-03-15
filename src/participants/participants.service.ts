@@ -2,23 +2,26 @@ import axios from "axios";
 import { prisma } from "../config/database/postgres";
 import { envs } from "../config/enviroments/enviroment";
 import { IParticipantReq } from "./interfaces/participant.interface";
-import { DiscordUserRes, GetParticipantsQueries, TokenRes, WhereQueries } from "./interfaces";
+import { DiscordUserRes, GetParticipantsQueries, TokenRes } from "./interfaces";
 import qs from 'querystring';
+import { Prisma } from "@prisma/client";
 
 
 export class ParticipantService {
 
     static async getAllParticipants(queries: GetParticipantsQueries) {
-        const where: WhereQueries = {}
-        const { offset, limit, discordId, giveawayId, name } = queries;
-        if (discordId) where.discordId = discordId;
-        if (giveawayId) where.giveawayId = giveawayId;
-        if (name) where.name = name;
-        return prisma.participant.findMany({ 
+        const where: Prisma.ParticipantWhereInput = {}
+        const { offset, limit, discordId, giveawayId, fullname } = queries;
+        if (discordId) where.discordId = { contains: discordId, mode: 'insensitive' };
+        if (giveawayId) where.giveawayId = +giveawayId;
+        if (fullname) where.fullname = { contains: fullname, mode: 'insensitive' };
+        const results = await prisma.participant.findMany({ 
             where, 
-            skip: offset,
-            take: limit
+            skip: offset && +offset,
+            take: limit && +limit
         });
+        const total = await prisma.participant.count({ where });
+        return { total, results }
     }
 
     static async createParticipant(data: IParticipantReq) {

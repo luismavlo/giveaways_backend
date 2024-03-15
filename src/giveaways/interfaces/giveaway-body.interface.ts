@@ -5,5 +5,5 @@ export interface GiveawayBody {
     description:       string;
     giveawayDate:      string;
     participantsLimit: number;
-    prize:             string;
+    // image
 }

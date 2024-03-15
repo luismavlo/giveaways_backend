@@ -4,7 +4,7 @@ import { validateParticipant } from "./participants.schema";
 import { ParticipantService } from "./participants.service";
 
 export const getAllParticipants = catchAsync(async (req: Request, res: Response) => {
-    const participants = ParticipantService.getAllParticipants(req.query);
+    const participants = await ParticipantService.getAllParticipants(req.query);
     return res.json(participants);
 })
 
