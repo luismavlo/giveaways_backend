@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { AppError, catchAsync } from "../errors";
 import { PrizeService } from "./prizes.service";
 import { generateUUID } from "../config/plugins/uuid.plugin";
-import { UploadFileService } from "../common/services/upload-files-cloud.service.js";
 import { validatePrize } from "./prizes.schema";
 import { PrizeBody } from "./interfaces/prize-body.interface";
 import { CreatePrize } from "./interfaces";
+import { UploadFileService } from "../common/services/upload-files-cloud.service";
 
 export const getAllPrizes = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     if (!req.query.giveawayId) 
@@ -59,7 +59,7 @@ export const updatePrize = catchAsync(async(req: Request, res: Response, next: N
     }
     if (req.body.giveawayId) req.body.giveawayId = +req.body.giveawayId;
     if (req.body.winnerId) req.body.winnerId = +req.body.winnerId;
-    
+
     const prize = await PrizeService.updatePrize(req.body, name as string, +giveawayId)
     return res.json(prize);
 });

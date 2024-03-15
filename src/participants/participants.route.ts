@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { createParticipant, deleteParticipant, getAllParticipants, getOneParticipant } from './participants.controller';
+import { protect } from '../auth/auth.middleware.js';
 
 export const router = Router();
 
@@ -9,4 +10,4 @@ router.route('/')
 
 router.route('/:id')
     .get(getOneParticipant)
-    .delete(deleteParticipant);
+    .delete(protect, deleteParticipant);

@@ -3,7 +3,7 @@ import { catchAsync } from "../errors";
 import { validateGiveaway, validateUpdateGiveaway } from "./giveaways.schema";
 import { GiveawayService } from "./giveaways.service";
 import { generateUUID } from "../config/plugins/uuid.plugin";
-import { UploadFileService } from "../common/services/upload-files-cloud.service.js";
+import { UploadFileService } from "../common/services/upload-files-cloud.service";
 
 export const getAllGiveaways = catchAsync(async(req: Request, res: Response) => {
     const giveaways = await GiveawayService.getAllGiveaways(req.query);
