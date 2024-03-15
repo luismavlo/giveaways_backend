@@ -21,7 +21,7 @@ export class GiveawayService {
             orderBy: { createdAt: 'desc' },
         });
         const total = await prisma.giveaway.count({ where });
-        return {total, results}
+        return { total, results }
     }
 
     static async createGiveaway(data: GiveawayBody) {
@@ -30,12 +30,12 @@ export class GiveawayService {
 
     static async getGiveawayById(giveawayId: number) {
         return prisma.giveaway.findUniqueOrThrow({
-            where: {giveawayId},
+            where: { giveawayId },
         })
     }
 
     static async updateGiveaway(data: GiveawayBody, giveawayId: number) {
-        return prisma.giveaway.update({data, where: { giveawayId }});
+        return prisma.giveaway.update({ data, where: { giveawayId } });
     }
 
     static async getGiveawayWinners(giveawayId: number) {
@@ -43,5 +43,36 @@ export class GiveawayService {
             where: { giveawayId },
             include: { winner: true },
         });
+    }
+
+    static async generateGiveawayWinners(giveawayId: number) {
+        const prizes = await prisma.prize.findMany({ where: { giveawayId } });
+        const participants = await prisma.participant.findMany({ where: { giveawayId }});
+
+        const participantsIds = participants.map(p => p.participantId);
+        const winnersIds = this.generateRandomNumbers(participantsIds, prizes.length);
+
+        const updates = winnersIds.map((winnerId, i) => {
+            return prisma.prize.update({
+                where: { prizeId: prizes[i].prizeId },
+                data: { winnerId },
+            })
+        })
+        await prisma.$transaction(updates);
+
+        return this.getGiveawayWinners(giveawayId);
+    }
+
+    private static generateRandomNumbers(numbers: number[], quantity: number) {
+        const ranNums = [];
+    
+        let j = 0;
+    
+        while (quantity--) {
+            j = Math.floor(Math.random() * (numbers.length));
+            ranNums.push(numbers[j]);
+            numbers.splice(j, 1);
+        }
+        return ranNums;
     }
 }

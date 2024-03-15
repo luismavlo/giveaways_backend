@@ -10,6 +10,7 @@ export const getAllGiveaways = catchAsync(async(req: Request, res: Response) => 
     return res.json(giveaways);
 });
 
+
 export const createGiveaway = catchAsync(async(req: Request, res: Response) => {
     const { hasError, errorMessages, giveawayData } = validateGiveaway(req.body);
 
@@ -52,10 +53,20 @@ export const updateGiveaway = catchAsync(async(req: Request, res: Response) => {
     return res.json(giveaway);
 });
 
+
 export const getGiveawayWinners = catchAsync(async(req: Request, res: Response) => {
     const { id } = req.params;
 
     const winners = await GiveawayService.getGiveawayWinners(+id);
+
+    return res.json(winners);
+});
+
+
+export const generateGiveawayWinners = catchAsync(async(req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const winners = await GiveawayService.generateGiveawayWinners(+id);
 
     return res.json(winners);
 });

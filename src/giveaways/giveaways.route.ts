@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createGiveaway, getAllGiveaways, getGiveawayById, getGiveawayWinners, updateGiveaway } from "./giveaways.controller";
+import { createGiveaway, getAllGiveaways, getGiveawayById, getGiveawayWinners, generateGiveawayWinners, updateGiveaway } from "./giveaways.controller";
 import { uploadSingle } from "../config/plugins/upload-files.plugin";
 
 export const router = Router();
@@ -14,3 +14,6 @@ router.route('/:id')
 
 router.route('/:id/winners')
     .get(getGiveawayWinners);
+
+router.route('/:id/generate-winners')
+    .get(generateGiveawayWinners);
