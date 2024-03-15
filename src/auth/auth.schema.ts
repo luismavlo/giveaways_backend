@@ -27,6 +27,7 @@ export function validateUser(data: IUser){
   return { hasError, errorMessages, userData }
 }
 
+
 export function validateLogin(data: ILoginUser){
   const result = loginSchema.safeParse(data);
 
@@ -34,4 +35,5 @@ export function validateLogin(data: ILoginUser){
 
   return { hasError, errorMessages, loginData }
 }
+
 

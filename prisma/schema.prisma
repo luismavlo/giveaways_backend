@@ -27,27 +27,39 @@ model User {
 }
 
 model Giveaway {
-  giveawayId          Int           @id @default(autoincrement())
-  title               String        @db.VarChar(255)
-  description         String
-  giveawayDate        DateTime
-  participantsLimit   Int
-  prize               String        @db.VarChar(255)
-  winnerParticipantId Int           @unique
-  winnerParticipant   Participant   @relation(name: "winnerParticipant", fields: [winnerParticipantId], references: [participantId])
-  createdAt           DateTime      @default(now())
-  participants        Participant[] @relation(name: "GiveawayParticipants")
-  status              Status        @default(ACTIVE)
+  giveawayId        Int           @id @default(autoincrement())
+  title             String        @db.VarChar(255)
+  description       String
+  giveawayDate      DateTime
+  image             String?
+  participantsLimit Int
+  createdAt         DateTime      @default(now())
+  participants      Participant[] @relation(name: "GiveawayParticipants")
+  status            Status        @default(ACTIVE)
+  prizes            Prize[]
+}
+
+model Prize {
+  prizeId    Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  image      String?
+  winnerId   Int?         @unique
+  winner     Participant? @relation(fields: [winnerId], references: [participantId])
+  giveawayId Int
+  giveaway   Giveaway     @relation(fields: [giveawayId], references: [giveawayId])
 }
 
 model Participant {
-  participantId  Int       @id @default(autoincrement())
-  discordId      String
-  fullname       String    @db.VarChar(200)
-  email          String    @db.VarChar(100)
-  giveaway       Giveaway  @relation(name: "GiveawayParticipants", fields: [giveawayId], references: [giveawayId])
-  giveawayId     Int
-  createdIt      DateTime  @default(now())
-  status         Status    @default(ACTIVE)
-  giveawayWinner Giveaway? @relation(name: "winnerParticipant")
+  participantId Int      @id @default(autoincrement())
+  discordId     String
+  fullname      String   @db.VarChar(200)
+  email         String   @db.VarChar(100)
+  giveaway      Giveaway @relation(name: "GiveawayParticipants", fields: [giveawayId], references: [giveawayId])
+  giveawayId    Int
+  createdIt     DateTime @default(now())
+  status        Status   @default(ACTIVE)
+  // giveawayWinner Giveaway? @relation(name: "winnerParticipant")
+  prize         Prize?
+
+  @@unique([discordId, giveawayId])
 }
