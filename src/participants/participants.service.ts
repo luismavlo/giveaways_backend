@@ -63,4 +63,12 @@ export class ParticipantService {
         });
     }
 
+    static async getOneParticipant(participantId: number) {
+        return prisma.participant.findUniqueOrThrow({ where: { participantId }});
+    }
+
+    static async deleteParticipant(participantId: number) {
+        await prisma.participant.delete({ where: { participantId } });
+    }
+
 }

@@ -21,5 +21,20 @@ export const createParticipant = catchAsync(async (req: Request, res: Response, 
     const user = await ParticipantService.createParticipant(participantData);
 
     return res.status(201).json(user);
+});
 
+export const getOneParticipant = catchAsync(async(req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const user = await ParticipantService.getOneParticipant(+id);
+
+    return res.json(user);
+});
+
+export const deleteParticipant = catchAsync(async(req: Request, res: Response) => {
+    const { id } = req.params;
+
+    await ParticipantService.deleteParticipant(+id);
+
+    return res.sendStatus(204);
 });
