@@ -58,6 +58,9 @@ export class ParticipantService {
                 giveawayId: giveawayId,
                 discordId: discordUser.id,
                 email: discordUser.email,
+            },
+            include: {
+                giveaway: { select: {title: true}}
             }
         });
     }
