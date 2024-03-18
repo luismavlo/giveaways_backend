@@ -4,7 +4,7 @@ import { extractValidationData } from "../common/utils/extractValidationData";
 import { IParticipantReq } from "./interfaces/participant.interface";
 
 export const participantSchema = z.object({
-    fullname:   z.string(),
+    redirectUri:   z.string(),
     giveawayId: z.number(),
     code:       z.string(),
 });

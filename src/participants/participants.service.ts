@@ -27,13 +27,13 @@ export class ParticipantService {
     static async createParticipant(data: IParticipantReq) {
         const url = 'https://discord.com/api/v10';
 
-        const { code, fullname, giveawayId } = data;
+        const { code, redirectUri, giveawayId } = data;
 
         const body = {
             grant_type: 'authorization_code',
             client_id: envs.DISCORD_CLIENT_ID,
             client_secret: envs.DISCORD_CLIENT_SECRET,
-            redirect_uri: envs.DISCORD_REDIRECT_URI,
+            redirect_uri: redirectUri,
             code: code
         }
 
@@ -52,10 +52,9 @@ export class ParticipantService {
         await axios.get(`${url}/users/@me/guilds/1130900724499365958/member`, bearerHeader);
 
         const { data: discordUser } = await axios.get<DiscordUserRes>(`${url}/users/@me`, bearerHeader);
-
         return prisma.participant.create({
             data: {
-                fullname: fullname,
+                fullname: discordUser.global_name,
                 giveawayId: giveawayId,
                 discordId: discordUser.id,
                 email: discordUser.email,

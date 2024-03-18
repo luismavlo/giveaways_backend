@@ -1,6 +1,6 @@
 
 export interface IParticipantReq {
-    fullname:   string;
+    redirectUri:   string;
     giveawayId: number;
     code:       string;
 }
