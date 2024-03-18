@@ -27,7 +27,10 @@ const handleInvalidDiscordCode = () =>
   new AppError("Invalid Discord Code", 401);
 
 const handleIsntInServer = () => 
-  new AppError("User isn't in DevTalles", 401)
+  new AppError("User isn't in DevTalles", 401);
+
+const handleDuplicatesP2002 = () => 
+  new AppError("Duplicate fields", 400);
  
 const sendErrorDev = (err: any, res: Response) => {
   res.status(err.statusCode).json({
@@ -71,6 +74,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     if(err.parent?.code === '23505') error = handleCastError23505();
     if (err.parent?.code === '22P02') error = handleCastError22P02();
     if (err.code === 'P2025') error = handleCastErrorP2025();
+    if (err.code === 'P2002') error = handleDuplicatesP2002();
     if(err.name === 'TokenExpiredError') error = handleJWTExpiredError();
     if(err.name === 'JsonWebTokenError') error = handleJWTError();
     if (err.response?.data?.error_description == 'Invalid "code" in request.')
