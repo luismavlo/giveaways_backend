@@ -9,7 +9,7 @@ import { protect } from "../auth/auth.middleware.js";
 
 export const router = Router();
 
-router.post('/', protect, catchAsync(async (req: Request, res: Response) => {
+router.post('/', catchAsync(async (req: Request, res: Response) => {
     await prisma.participant.deleteMany();
     await prisma.prize.deleteMany();
     await prisma.giveaway.deleteMany();
